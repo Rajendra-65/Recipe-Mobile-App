@@ -1,9 +1,18 @@
 import { useSignIn } from "@clerk/clerk-expo";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, View } from "react-native";
-import { KeyboardAvoidingView } from "react-native-web";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  View
+} from "react-native";
 import { authStyles } from "../../assets/styles/auth.styles.js";
+import { COLORS } from "../constatnts/colors.js";
 
 const SignIn = () => {
   const router = useRouter();
@@ -48,9 +57,35 @@ const SignIn = () => {
   return (
     <View style = {authStyles.container}>
       <KeyboardAvoidingView
-        style = {authStyles.key}
+        style = {authStyles.keyboardView}
+        behavior = {Platform.OS === "ios" ? "padding" : "height"}
       >
-
+        <ScrollView
+          contentContainerStyle = {authStyles.scrollContent}
+          showVerticalScrollIndicator = {true}
+        >
+          <View style = {authStyles.imageContainer}>
+            <Image 
+              source = {require("../../assets/images/i1.png")}
+              style = {authStyles.image}
+              contentFit = "contain"
+            />
+          </View>
+          <Text style = {authStyles.title}>Welcome Back</Text>
+          <View style = {authStyles.formContainer}>
+            <View style = {authStyles.inputContainer}>
+              <TextInput
+                style = {authStyles.textInput}
+                placeholder = "Enter Email"
+                placeholderTextColor = {COLORS.textLight}
+                value = {email}
+                onChangeText = {setEmail}
+                keyboardType = "email-address"
+                autoCapitalize = "none"
+              />
+            </View>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );

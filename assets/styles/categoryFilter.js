@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { homeStyles } from "../assets/styles/home.styles";
+import { homeStyles } from "../assets/styles/home.styles.js";
 
 export default function CategoryFilter({ categories, selectedCategory, onSelectCategory }) {
   return (

@@ -1,4 +1,5 @@
 import { useSignIn } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -9,6 +10,7 @@ import {
   ScrollView,
   Text,
   TextInput,
+  TouchableOpacity,
   View
 } from "react-native";
 import { authStyles } from "../../assets/styles/auth.styles.js";
@@ -59,6 +61,7 @@ const SignIn = () => {
       <KeyboardAvoidingView
         style = {authStyles.keyboardView}
         behavior = {Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset = {Platform.OS === 'ios' ? 64 : 0}
       >
         <ScrollView
           contentContainerStyle = {authStyles.scrollContent}
@@ -73,6 +76,7 @@ const SignIn = () => {
           </View>
           <Text style = {authStyles.title}>Welcome Back</Text>
           <View style = {authStyles.formContainer}>
+            {/* Email Input */}
             <View style = {authStyles.inputContainer}>
               <TextInput
                 style = {authStyles.textInput}
@@ -84,6 +88,50 @@ const SignIn = () => {
                 autoCapitalize = "none"
               />
             </View>
+            {/* Password INPUT */}
+            <View style = {authStyles.inputContainer}>
+              <TextInput
+                style = {authStyles.textInput}
+                placeholder = "Enter your password"
+                placeholderTextColor = {COLORS.textLight}
+                value = {password}
+                onChangeText = {setPassword}
+                secureTextEntry = {!showPassword}
+                autoCapitalize = "none"
+              />
+              <TouchableOpacity
+                style = {authStyles.eyeButton}
+                onPress = {() => setShowPassword(!showPassword)}
+              >
+                <Ionicons
+                  name = {showPassword ? "eye-outline" : "eye-off-outline"}
+                  size = {20}
+                  color = {COLORS.textLight}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style = {[authStyles.authButton,loading && authStyles.buttonDisabled]}
+              onPress = {handleSignIn}
+              disabled = {loading}
+              activeOpacity = {0.8}
+            >
+              <Text style = {authStyles.buttonText}>
+                {loading ? "Signing In...." : "Sign In"}
+              </Text>
+            </TouchableOpacity>
+            {/* Sign Up Link */}
+            <TouchableOpacity
+              style = {authStyles.linkContainer}
+              onPress = {() => router.push("/(auth)/sign-up")}
+            >
+              <Text style = {authStyles.linkText}>
+                Don&apos;t have an account ? <Text style = {authStyles.link}>
+                  Sign Up
+                </Text>
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

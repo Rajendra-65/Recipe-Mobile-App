@@ -1,50 +1,151 @@
-import { useSignUp } from '@clerk/clerk-expo';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { useSignUp } from "@clerk/clerk-expo";
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { Ionicons } from "@expo/vector-icons";
+import { COLORS } from "../../app/constatnts/colors.js";
+import { authStyles } from "../../assets/styles/auth.styles";
+import VerifyEmail from "./verify-email.jsx";
 
 const SignUp = () => {
-
   const router = useRouter();
-  const {isLoaded, signUp} = useSignUp();
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [showpassword,setShowPassword] = useState(false);
+  const { isLoaded, signUp } = useSignUp();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [pendingVerificatin, setPendingVerification] = useState(false)
+  const [pendingVerification, setPendingVerification] = useState(false);
 
   const handleSignUp = async () => {
-    if (!email || !password) return Alert.alert("Error","please fill all the details")
-    if (password.length < 6) return Alert.alert("Error","password must be at least 6 charecters")
-    
-    if(!isLoaded) return ;
+    console.log("code reached.....")
+    console.log(email,password)
+    if (!email || !password)
+      return Alert.alert("Error", "please fill all the details");
+    if (password.length < 6)
+      return Alert.alert("Error", "password must be at least 6 charecters");
+
+    if (!isLoaded) return;
 
     setLoading(true);
-    
-    try{
+
+    try {
       await signUp.create({
-        emailAddress : email,
-        password : password
-      })
-
+        emailAddress: email,
+        password: password,
+      });
+      console.log("above pending verification")
       await signUp.prepareEmailAddressVerification({
-        strategy : "email_code"
-      })
+        strategy: "email_code",
+      });
 
-      setPendingVerification(true)
-    }catch(e){
-      Alert.alert("Error",e.errors?.[0]?.message || "Failed to create account");
-      console.log(JSON.stringify(e,null,2))
-    }finally{
-      setLoading(false)
+      setPendingVerification(true);
+    } catch (e) {
+      Alert.alert(
+        "Error",
+        e.errors?.[0]?.message || "Failed to create account"
+      );
+      console.log(JSON.stringify(e, null, 2));
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  if (pendingVerification) return <VerifyEmail email = {email} onBack = {()=>setPendingVerification(false)} />;
 
   return (
-    <View>
-      <Text>sign-up</Text>
+    <View style={authStyles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        style={authStyles.keyboardView}
+      >
+        <ScrollView
+          contentContainerStyle={authStyles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={authStyles.imageContainer}>
+            <Image
+              source={require("../../assets/images/i2.png")}
+              style={authStyles.image}
+              contentFit="contain"
+            />
+          </View>
+          <Text style={authStyles.title}>Create Account</Text>
+          <View style={authStyles.formContainer}>
+            {/* Email Input */}
+            <View style={authStyles.inputContainer}>
+              <TextInput
+                style={authStyles.textInput}
+                placeholder="Enter Email"
+                placeholderTextColor={COLORS.textLight}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+            {/* Password */}
+            <View style={authStyles.inputContainer}>
+              <TextInput
+                style={authStyles.textInput}
+                placeholder="Enter your password"
+                placeholderTextColor={COLORS.textLight}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+              <TouchableOpacity
+                style={authStyles.eyeButton}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-outline" : "eye-off-outline"}
+                  size={20}
+                  color={COLORS.textLight}
+                />
+              </TouchableOpacity>
+            </View>
+            {/* Submit button */}
+            <TouchableOpacity
+              style={[
+                authStyles.authButton,
+                loading && authStyles.buttonDisabled,
+              ]}
+              onPress={handleSignUp}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              <Text style={authStyles.buttonText}>
+                {loading ? "Signing Up...." : "Sign Up"}
+              </Text>
+            </TouchableOpacity>
+            {/* Sign In Link */}
+            <TouchableOpacity
+              style={authStyles.linkContainer}
+              onPress={() => router.back()}
+            >
+              <Text style={authStyles.linkText}>
+                Already have an account?{" "}
+                <Text style={authStyles.link}>Sign In</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
-  )
-}
+  );
+};
 
-export default SignUp
+export default SignUp;

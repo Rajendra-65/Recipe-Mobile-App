@@ -1,8 +1,12 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView, TouchableOpacity, View, } from 'react-native';
+import { FlatList, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { homeStyles } from "../../assets/styles/home.styles.js";
+import CategoryFilter from "../components/CategoryFilter.jsx";
+import RecipeCard from "../components/RecipeCard.jsx";
+import { COLORS } from "../constatnts/colors.js";
 import { MealAPI } from '../services/mealAPI';
 
 const Home = () => {
@@ -122,10 +126,102 @@ const Home = () => {
                     contentFilt = "cover"
                     transition = {500}
                   />
+                  <View style = {homeStyles.featuredOverlay}>
+                    <View style = {homeStyles.featuredBadge}>
+                      <Text style = {homeStyles.featuredBadgeText}>
+                        Featured
+                      </Text>
+                    </View>
+                    <View style = {homeStyles.featuredContent}>
+                      <Text 
+                        style = {homeStyles.featuredTitle}
+                        numberOfLine = {2}
+                      >
+                        {
+                          feturedRecipe.title
+                        }
+                      </Text>
+                      <View style = {homeStyles.featuredMeta}>
+                        <View style = {homeStyles.metaItem}>
+                          <Ionicons 
+                            name = "time-outline" 
+                            size = {16}
+                            color = {COLORS.white}
+                          />
+                          <Text style = {homeStyles.metaText}>
+                            {feturedRecipe.cookTime}
+                          </Text>
+                        </View>
+                        <View style = {homeStyles.metaItem}>
+                          <Ionicons 
+                            name = "people-outline" 
+                            size = {16}
+                            color = {COLORS.white}
+                          />
+                          <Text style = {homeStyles.metaText}>
+                            {feturedRecipe.servings}
+                          </Text>
+                        </View>
+                        <View style = {homeStyles.metaItem}>
+                          <Ionicons 
+                            name = "location-outline" 
+                            size = {16}
+                            color = {COLORS.white}
+                          />
+                          <Text style = {homeStyles.metaText}>
+                            {feturedRecipe.area}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
                 </View>
               </TouchableOpacity>
             </View>
         }
+        {
+          categoreies.length > 0 && (
+            <CategoryFilter
+              categories = {categoreies}
+              selectedCategory = {selectedCategory}
+              onSelectCategory = {handleCategorySelect}
+            />
+          )
+        }
+        <View style = {homeStyles.recipesSection}>
+          <View style = {homeStyles.sectionHeader}>
+            <Text style = {homeStyles.sectionTitle}>
+              {selectedCategory}
+            </Text>
+          </View>
+          {
+            recipies.length > 0 ? (
+              <FlatList
+                data = {recipies}
+                renderItem = {({item}) => <RecipeCard recipe = {item}/>}
+                keyExtractor = {(item)=>item.id.toString()}
+                numColumns = {2}
+                columnWrapperStyle = {homeStyles.row}
+                contentContainerStyle = {homeStyles.recipesGrid}
+                scrollEnabled = {false}
+              />
+            ) : (
+              <View style = {homeStyles.emptyState}>
+                <Ionicons 
+                  name = "restaurant-outline"
+                  size = {64}
+                  color = {COLORS.textLight}
+                />
+                <Text style = {homeStyles.emptyTitle}>
+                  No recipes Found
+                </Text>
+                <Text style = {homeStyles.emptyDescription}>
+                  Try a dirrerent category
+                </Text>
+              </View>
+            )
+          }
+        </View>
       </ScrollView>
     </View>
   )

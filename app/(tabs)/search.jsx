@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { Text, View } from 'react-native'
-import { searchStyles } from "../../assets/styles/search.styles.js"
-import { COLORS } from '../constatnts/colors.js'
-import { useDebounce } from "../hooks/useDebounce.js"
-import { MealAPI } from "../services/mealAPI"
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useState } from 'react';
+import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import RecipeCard from "../../app/components/RecipeCard.jsx";
+import { searchStyles } from "../../assets/styles/search.styles.js";
+import { COLORS } from '../constatnts/colors.js';
+import { useDebounce } from "../hooks/useDebounce.js";
+import { MealAPI } from "../services/mealAPI";
 
 const Search = () => {
   const [searchQuery,setSearchQuery] = useState("");
@@ -82,10 +84,78 @@ const Search = () => {
             color = {COLORS.textLight}
             style = {searchStyles.searchIcon}
           />
+          <TextInput
+              style = {searchStyles.searchInput}
+              placeholder = "Search recipes, Ingredients..."
+              placeholderTextColor = {COLORS.textLight}
+              value = {searchQuery}
+              onChangeText = {setSearchQuery}
+              returnKeyType = "search"
+          />
+          {
+            searchQuery.length > 0 && (
+              <TouchableOpacity
+                onPress = {()=> setSearchQuery("")}
+                style = {searchStyles.clearButton}
+              >
+                <Ionicons 
+                  name = "close-circle"
+                  size = {20}
+                  color = {COLORS.textLight}
+                />
+              </TouchableOpacity>
+            )
+          }
+        </View>
+        <View style = {searchStyles.resultsSection}>
+          <View style = {searchStyles.resultsHeader}>
+            <Text style = {searchStyles.resultsTitle}>
+              {
+                searchQuery ? `Results for "${searchQuery}"` : "Popular Recipes"
+              }
+            </Text>
+            <Text style = {searchStyles.resultsCount}>
+              {recipes.length} found
+            </Text>
+          </View>
         </View>
       </View>
+      {loading ? (
+        <View style = {searchStyles.loadingContainer}>
+          <Text>Loading ....</Text>
+        </View>
+      ) : (
+        <FlatList 
+          data = {recipes}
+          renderItem = {({item}) => <RecipeCard recipe = {item} />}
+          keyExtractor = {(item)=> item.id.toString()}
+          numColumns = {2}
+          columnWrapperStyle = {searchStyles.row}
+          contentContainerStyle = {searchStyles.recipesGrid}
+          showsVerticalScrollIndicator = {false}
+          ListEmptyComponent={<NoResultsFound/>}
+        />
+      )}
     </View>
   )
 }
 
-export default Search
+export default Search;
+
+function NoResultsFound () {
+  return (
+    <View style = {searchStyles.emptyState}>
+      <Ionicons 
+        name = "search-outline"
+        size = {64}
+        color = {COLORS.textLight}
+      />
+      <Text style = {searchStyles.emptyTitle}>
+        No Recipes Found
+      </Text>
+      <Text style = {searchStyles.emptyDescription}>
+        Try adjusting your search or try different keywords
+      </Text>
+    </View>
+  )
+}

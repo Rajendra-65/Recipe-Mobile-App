@@ -1,0 +1,1 @@
+export const API_URL = "https://recipe-booking-backend.onrender.com/api"

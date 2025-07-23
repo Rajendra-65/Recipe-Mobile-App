@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { COLORS } from "../../constants/colors";
+import { COLORS } from "../../app/constatnts/colors.js";
 
 export const favoritesStyles = StyleSheet.create({
   container: {

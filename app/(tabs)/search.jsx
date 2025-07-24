@@ -1,18 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import RecipeCard from "../../app/components/RecipeCard.jsx";
 import { searchStyles } from "../../assets/styles/search.styles.js";
+import RecipeCard from "../components/RecipeCard";
 import { COLORS } from "../constatnts/colors.js";
 import { useDebounce } from "../hooks/useDebounce.js";
-import { MealAPI } from "../services/mealAPI";
-
+import { MealAPI } from "../services/mealAPI.js";
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [recipes, setRecipes] = useState([]);
@@ -49,6 +49,7 @@ const Search = () => {
       try {
         const results = await performSearch("");
         setRecipes(results);
+        console.log(recipes);
       } catch (e) {
         console.log(e);
       } finally {
@@ -79,7 +80,9 @@ const Search = () => {
 
   if (initialLoading) return <Text>Loading some Data</Text>;
 
-  return (
+  return initialLoading ? (
+    <ActivityIndicator size="large" color="#fff" />
+  ) : (
     <View style={searchStyles.container}>
       <View style={searchStyles.searchSection}>
         <View style={searchStyles.searchContainer}>
@@ -119,23 +122,23 @@ const Search = () => {
               {recipes.length} found
             </Text>
           </View>
-          {loading ? (
-            <View style={searchStyles.loadingContainer}>
-              <Text>Loading ....</Text>
-            </View>
-          ) : (
-            <FlatList
-              data={recipes}
-              renderItem={({ item }) => <RecipeCard recipe={item} />}
-              keyExtractor={(item) => item.id.toString()}
-              numColumns={2}
-              columnWrapperStyle={searchStyles.row}
-              contentContainerStyle={searchStyles.recipesGrid}
-              showsVerticalScrollIndicator={false}
-              ListEmptyComponent={<NoResultsFound />}
-            />
-          )}
         </View>
+      </View>
+      <View style={{ flex: 1 , paddingHorizontal : 10, paddingTop : 10 }}>
+        {initialLoading ? (
+          <ActivityIndicator size="large" color="#fff" />
+        ) : (
+          <FlatList
+            data={recipes}
+            renderItem={({ item }) => <RecipeCard recipe={item} />}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={2}
+            columnWrapperStyle={searchStyles.row}
+            contentContainerStyle={searchStyles.recipesGrid}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={<NoResultsFound />}
+          />
+        )}
       </View>
     </View>
   );

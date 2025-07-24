@@ -2,6 +2,7 @@ import { useClerk, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import NoFavoritesFound from "../../app/components/NoFavoritesFound.jsx";
 import { API_URL } from "../../app/constatnts/api.js";
 import { favoritesStyles } from "../../assets/styles/favorites.styles.js";
 import RecipeCard from "../components/RecipeCard";
@@ -14,6 +15,7 @@ const Favorites = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     const loadFavorites = async () => {
       try {
         const response = await fetch(`${API_URL}/favorites/${user.id}`);
@@ -36,7 +38,10 @@ const Favorites = () => {
         setLoading(false);
       }
     };
-  }, [user.id]);
+
+    loadFavorites();
+
+  }, []);
 
   const handleSignOut = (async) => {};
 
@@ -51,7 +56,7 @@ const Favorites = () => {
             style={favoritesStyles.logoutButton}
             onPress={handleSignOut}
           >
-            <Ionicons name="lout-out-outline" size={22} color={COLORS.text} />
+            <Ionicons name="log-out-outline" size={22} color={COLORS.text} />
           </TouchableOpacity>
         </View>
         <View style = {favoritesStyles.recipesSection}>
@@ -63,6 +68,7 @@ const Favorites = () => {
             columnWrapperStyle = {favoritesStyles.row}
             contentContainerStyle = {favoritesStyles.recipesGrid}
             scrollEnabled = {false}
+            ListEmptyComponent = {<NoFavoritesFound/>}
           />
         </View>
       </ScrollView>

@@ -49,7 +49,6 @@ const Search = () => {
       try {
         const results = await performSearch("");
         setRecipes(results);
-        console.log(recipes);
       } catch (e) {
         console.log(e);
       } finally {

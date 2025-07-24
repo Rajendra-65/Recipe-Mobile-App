@@ -13,6 +13,7 @@ import { COLORS } from "../constatnts/colors.js";
 import { MealAPI } from "../services/mealAPI.js";
 
 const RecipeDetailScreen = () => {
+
   const { id: recipeId } = useLocalSearchParams();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,6 +25,7 @@ const RecipeDetailScreen = () => {
   const userId = user?.id;
 
   useEffect(() => {
+
     const checkIfSaved = async () => {
       try {
         const response = await fetch(`${API_URL}/favorites/${userId}`);
@@ -62,6 +64,7 @@ const RecipeDetailScreen = () => {
 
     checkIfSaved();
     loadRecipeDetail();
+
   }, []);
 
   const getYoutubeEmbedUrl = (url) => {

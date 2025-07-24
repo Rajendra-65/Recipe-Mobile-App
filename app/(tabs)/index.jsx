@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { homeStyles } from "../../assets/styles/home.styles.js";
 import CategoryFilter from "../components/CategoryFilter.jsx";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import RecipeCard from "../components/RecipeCard.jsx";
 import { COLORS } from "../constatnts/colors.js";
 import { MealAPI } from "../services/mealAPI";
@@ -87,6 +88,8 @@ const Home = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  if(loading && !refreshing) return <LoadingSpinner message = "Loading delicisous recipies... "/>
 
   return (
     <View style={homeStyles.container}>

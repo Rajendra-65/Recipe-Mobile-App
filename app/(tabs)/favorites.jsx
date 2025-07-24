@@ -5,7 +5,7 @@ import { Alert, FlatList, ScrollView, Text, TouchableOpacity, View } from "react
 import NoFavoritesFound from "../../app/components/NoFavoritesFound.jsx";
 import { API_URL } from "../../app/constatnts/api.js";
 import { favoritesStyles } from "../../assets/styles/favorites.styles.js";
-import { LoadingSpinner } from "../components/LoadingSpinner.jsx";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import RecipeCard from "../components/RecipeCard";
 import { COLORS } from "../constatnts/colors";
 
@@ -44,7 +44,16 @@ const Favorites = () => {
 
   }, []);
 
-  const handleSignOut = (async) => {};
+  const handleSignOut = (async) => {
+    Alert.alert("Logout","Are you sure you want to logout?",[
+      {
+        "text" : "cancel" , style : "cancel"
+      },
+      {
+        "text" : "Logout" , style : "destructive", onPress: signOut
+      }
+    ])
+  };
 
   if (loading) return <LoadingSpinner message = "Loading your favorites"/>;
 

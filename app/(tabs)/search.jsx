@@ -1,18 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
   Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { searchStyles } from "../../assets/styles/search.styles.js";
-import RecipeCard from "../components/RecipeCard";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import { COLORS } from "../constatnts/colors.js";
 import { useDebounce } from "../hooks/useDebounce.js";
 import { MealAPI } from "../services/mealAPI.js";
+
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [recipes, setRecipes] = useState([]);
@@ -77,70 +74,8 @@ const Search = () => {
     handleSearch();
   }, [debouncedSearchQuery, initialLoading]);
 
-  if (initialLoading) return <Text>Loading some Data</Text>;
+  if (true) return <LoadingSpinner message = "Loading recipes..."/>;
 
-  return initialLoading ? (
-    <ActivityIndicator size="large" color="#fff" />
-  ) : (
-    <View style={searchStyles.container}>
-      <View style={searchStyles.searchSection}>
-        <View style={searchStyles.searchContainer}>
-          <Ionicons
-            name="search"
-            size={20}
-            color={COLORS.textLight}
-            style={searchStyles.searchIcon}
-          />
-          <TextInput
-            style={searchStyles.searchInput}
-            placeholder="Search recipes, Ingredients..."
-            placeholderTextColor={COLORS.textLight}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            returnKeyType="search"
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setSearchQuery("")}
-              style={searchStyles.clearButton}
-            >
-              <Ionicons
-                name="close-circle"
-                size={20}
-                color={COLORS.textLight}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={searchStyles.resultsSection}>
-          <View style={searchStyles.resultsHeader}>
-            <Text style={searchStyles.resultsTitle}>
-              {searchQuery ? `Results for "${searchQuery}"` : "Popular Recipes"}
-            </Text>
-            <Text style={searchStyles.resultsCount}>
-              {recipes.length} found
-            </Text>
-          </View>
-        </View>
-      </View>
-      <View style={{ flex: 1 , paddingHorizontal : 10, paddingTop : 10 }}>
-        {initialLoading ? (
-          <ActivityIndicator size="large" color="#fff" />
-        ) : (
-          <FlatList
-            data={recipes}
-            renderItem={({ item }) => <RecipeCard recipe={item} />}
-            keyExtractor={(item, index) => index.toString()}
-            numColumns={2}
-            columnWrapperStyle={searchStyles.row}
-            contentContainerStyle={searchStyles.recipesGrid}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={<NoResultsFound />}
-          />
-        )}
-      </View>
-    </View>
-  );
 };
 
 export default Search;
